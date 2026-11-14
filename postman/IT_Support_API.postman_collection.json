@@ -1,0 +1,64 @@
+{
+  "info": {
+    "name": "IT Support & Incident Management API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Collection Postman conforme à la section 10 du cahier des charges (Spring Boot + JWT)."
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth - Login",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/auth/login",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"admin@deskflow.ma\",\n  \"motDePasse\": \"Password123!\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Users - Me",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/users/me",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+      }
+    },
+    {
+      "name": "Tickets - List All (Admin/Tech)",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/tickets?page=0&size=10",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+      }
+    },
+    {
+      "name": "Tickets - Assign (Admin)",
+      "request": {
+        "method": "PUT",
+        "url": "{{baseUrl}}/api/tickets/1/assign",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"technicienId\": 2,\n  \"teamId\": 3\n}"
+        }
+      }
+    },
+    {
+      "name": "Dashboard - Stats",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/dashboard/stats",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+      }
+    }
+  ]
+}

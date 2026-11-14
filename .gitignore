@@ -1,0 +1,17 @@
+# Spring Boot / Maven / IntelliJ
+spring-boot-backend/target/
+spring-boot-backend/.mvn/
+*.iml
+.idea/
+.vscode/
+
+# Angular / Node
+angular-frontend/node_modules/
+angular-frontend/dist/
+angular-frontend/.angular/
+
+# Uploads & Logs
+uploads/
+*.log
+.DS_Store
+Thumbs.db
