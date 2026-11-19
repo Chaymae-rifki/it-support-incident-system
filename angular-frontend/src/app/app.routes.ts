@@ -3,13 +3,10 @@ import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
-  {
-    path: 'login',
-    loadComponent: () => import('./features/auth/login.component').then(m => m.LoginComponent),
-  },
+  { path: 'login', loadComponent: () => import('./features/auth/login.component').then(m => m.LoginComponent) },
   {
     path: 'dashboard',
-    canActivate: [authGuard, roleGuard(['ADMIN', 'TECHNICIEN'])],
+    canActivate: [authGuard, roleGuard(['ADMIN', 'IT_MANAGER', 'TECHNICIEN'])],
     loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent),
   },
   {
@@ -19,7 +16,7 @@ export const routes: Routes = [
   },
   {
     path: 'tickets/new',
-    canActivate: [authGuard, roleGuard(['EMPLOYE'])],
+    canActivate: [authGuard, roleGuard(['EMPLOYE', 'IT_MANAGER', 'ADMIN'])],
     loadComponent: () => import('./features/tickets/ticket-create.component').then(m => m.TicketCreateComponent),
   },
   {
@@ -29,7 +26,7 @@ export const routes: Routes = [
   },
   {
     path: 'admin',
-    canActivate: [authGuard, roleGuard(['ADMIN'])],
+    canActivate: [authGuard, roleGuard(['ADMIN', 'IT_MANAGER'])],
     loadComponent: () => import('./features/admin/admin.component').then(m => m.AdminComponent),
   },
   {
@@ -38,4 +35,5 @@ export const routes: Routes = [
     loadComponent: () => import('./features/notifications/notifications.component').then(m => m.NotificationsComponent),
   },
   { path: '', redirectTo: 'tickets', pathMatch: 'full' },
+  { path: '**', redirectTo: 'tickets' },
 ];

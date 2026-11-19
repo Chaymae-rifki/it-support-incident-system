@@ -1,6 +1,7 @@
-# Spring Boot / Maven / IntelliJ
+# Spring Boot / Maven
 spring-boot-backend/target/
-spring-boot-backend/.mvn/
+
+# IDE
 *.iml
 .idea/
 .vscode/
@@ -10,8 +11,10 @@ angular-frontend/node_modules/
 angular-frontend/dist/
 angular-frontend/.angular/
 
-# Uploads & Logs
+# Pièces jointes envoyées par les utilisateurs
 uploads/
+
+# Logs et fichiers système
 *.log
 .DS_Store
 Thumbs.db

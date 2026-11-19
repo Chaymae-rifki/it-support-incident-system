@@ -1,3 +1,4 @@
+
 package ma.ensaf.itsupport.entity;
 
 import jakarta.persistence.*;
@@ -6,8 +7,13 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tickets")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Ticket {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -46,13 +52,30 @@ public class Ticket {
     @JoinColumn(name = "team_id")
     private Team team;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "asset_id")
+    private Asset asset;
+
     @Column(columnDefinition = "TEXT")
     private String solutionAppliquee;
 
     @Builder.Default
     private LocalDateTime dateCreation = LocalDateTime.now();
+
     private LocalDateTime dateResolution;
+
     private LocalDateTime dateCloture;
+
+    // SLA
+    private LocalDateTime dateEcheancePremiereReponse;
+
+    private LocalDateTime dateEcheanceResolution;
+
+    private LocalDateTime datePremiereReponse;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private boolean slaAlerteEnvoyee = false;
 
     public enum TicketStatus {
         OUVERT, AFFECTE, EN_COURS, EN_ATTENTE, RESOLU, CLOTURE, ANNULE

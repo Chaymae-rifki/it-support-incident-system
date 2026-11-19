@@ -1,6 +1,3 @@
--- Schéma relationnel MySQL & Jeu de données de démonstration
--- Projet : IT Support & Incident Management System (ENSA Fès - ILIA 2)
-
 CREATE DATABASE IF NOT EXISTS it_support_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE it_support_db;
 
@@ -91,7 +88,6 @@ CREATE TABLE notifications (
     CONSTRAINT fk_notif_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- Données initiales (mot de passe BCrypt pour 'Password123!')
 INSERT INTO teams (nom, description) VALUES
 ('Support Poste & Matériel', 'Postes, écrans, imprimantes'),
 ('Réseau & Infrastructure', 'Wi-Fi, VPN, pare-feu'),
@@ -108,3 +104,5 @@ INSERT INTO users (nom, prenom, email, mot_de_passe, role, team_id) VALUES
 ('Rifki', 'Chaymae', 'admin@deskflow.ma', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'ADMIN', NULL),
 ('Oubouni', 'Imane', 'imane.tech@deskflow.ma', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'TECHNICIEN', 3),
 ('Tazi', 'Salma', 'salma.employe@deskflow.ma', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'EMPLOYE', NULL);
+
+ALTER TABLE users MODIFY role ENUM('EMPLOYE','TECHNICIEN','IT_MANAGER','ADMIN') NOT NULL;

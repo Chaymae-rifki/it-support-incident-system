@@ -19,6 +19,17 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
+    @ExceptionHandler(org.springframework.security.authentication.DisabledException.class)
+    public ResponseEntity<?> handleDisabled(org.springframework.security.authentication.DisabledException ex) {
+        return build(HttpStatus.UNAUTHORIZED, "Compte désactivé. Contactez l'administrateur.");
+    }
+
+    @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
+    public ResponseEntity<?> handleIntegrity(org.springframework.dao.DataIntegrityViolationException ex) {
+        return build(HttpStatus.CONFLICT,
+                "Opération impossible : cet élément est référencé ailleurs. Désactivez-le plutôt que de le supprimer.");
+    }
+
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<?> handleBusiness(BusinessException ex) {
         return build(HttpStatus.BAD_REQUEST, ex.getMessage());
@@ -47,7 +58,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(status).body(Map.of(
                 "timestamp", LocalDateTime.now().toString(),
                 "status", status.value(),
-                "message", message
-        ));
+                "message", message));
     }
 }

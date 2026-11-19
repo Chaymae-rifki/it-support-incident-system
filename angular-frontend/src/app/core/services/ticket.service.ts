@@ -2,22 +2,20 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import {
-  Category,
-  DashboardStats,
-  NotificationItem,
-  Team,
-  Ticket,
-  TicketDetail,
-  User,
+  Asset, Category, DashboardStats, Intervention, NotificationItem, Page,
+  TechnicianLoad, Team, Ticket, TicketDetail, User,
 } from '../../models/models';
 
 @Injectable({ providedIn: 'root' })
 export class TicketService {
   private api = environment.apiUrl;
-
   constructor(private http: HttpClient) {}
 
-  createTicket(payload: { titre: string; description: string; categoryId: number; priorite: string }, file?: File) {
+  //  Tickets
+  createTicket(
+    payload: { titre: string; description: string; categoryId: number; priorite: string; assetId?: number | null },
+    file?: File
+  ) {
     const form = new FormData();
     form.append('ticket', new Blob([JSON.stringify(payload)], { type: 'application/json' }));
     if (file) form.append('attachment', file);
@@ -25,9 +23,8 @@ export class TicketService {
   }
 
   getMyTickets(page = 0, size = 10) {
-    return this.http.get<{ content: Ticket[]; totalElements: number }>(`${this.api}/tickets/my`, {
-      params: new HttpParams().set('page', page).set('size', size),
-    });
+    const params = new HttpParams().set('page', page).set('size', size).set('sort', 'dateCreation,desc');
+    return this.http.get<Page<Ticket>>(`${this.api}/tickets/my`, { params });
   }
 
   getAllTickets(filters: Record<string, string | number>) {
@@ -35,62 +32,46 @@ export class TicketService {
     Object.entries(filters).forEach(([k, v]) => {
       if (v !== '' && v !== null && v !== undefined) params = params.set(k, String(v));
     });
-    return this.http.get<{ content: Ticket[]; totalElements: number }>(`${this.api}/tickets`, { params });
+    return this.http.get<Page<Ticket>>(`${this.api}/tickets`, { params });
   }
 
-  getById(id: number) {
-    return this.http.get<TicketDetail>(`${this.api}/tickets/${id}`);
-  }
-
+  getById(id: number) { return this.http.get<TicketDetail>(`${this.api}/tickets/${id}`); }
   assign(id: number, technicienId: number | null, teamId: number | null) {
     return this.http.put<Ticket>(`${this.api}/tickets/${id}/assign`, { technicienId, teamId });
   }
-
-  take(id: number) {
-    return this.http.put<Ticket>(`${this.api}/tickets/${id}/take`, {});
-  }
-
+  take(id: number) { return this.http.put<Ticket>(`${this.api}/tickets/${id}/take`, {}); }
   updateStatus(id: number, statut: string, solutionAppliquee?: string) {
     return this.http.put<Ticket>(`${this.api}/tickets/${id}/status`, { statut, solutionAppliquee });
   }
-
-  cancel(id: number) {
-    return this.http.put<Ticket>(`${this.api}/tickets/${id}/cancel`, {});
-  }
-
-  confirm(id: number) {
-    return this.http.put<Ticket>(`${this.api}/tickets/${id}/confirm`, {});
-  }
-
-  reopen(id: number, motif: string) {
-    return this.http.put<Ticket>(`${this.api}/tickets/${id}/reopen`, { motif });
-  }
-
+  cancel(id: number) { return this.http.put<Ticket>(`${this.api}/tickets/${id}/cancel`, {}); }
+  confirm(id: number) { return this.http.put<Ticket>(`${this.api}/tickets/${id}/confirm`, {}); }
+  reopen(id: number, motif: string) { return this.http.put<Ticket>(`${this.api}/tickets/${id}/reopen`, { motif }); }
   addComment(id: number, contenu: string, interne: boolean) {
     return this.http.post(`${this.api}/tickets/${id}/comments`, { contenu, interne });
   }
-
-  getDashboardStats() {
-    return this.http.get<DashboardStats>(`${this.api}/dashboard/stats`);
+  getInterventions(id: number) { return this.http.get<Intervention[]>(`${this.api}/tickets/${id}/interventions`); }
+  addIntervention(id: number, body: { diagnostic: string; actions: string; tempsPasseMinutes: number }) {
+    return this.http.post(`${this.api}/tickets/${id}/interventions`, body);
+  }
+  downloadAttachment(id: number) {
+    return this.http.get(`${this.api}/attachments/${id}/download`, { responseType: 'blob' });
   }
 
-  getNotifications() {
-    return this.http.get<NotificationItem[]>(`${this.api}/notifications`);
-  }
+  //Dashboard et notifications
+  getDashboardStats() { return this.http.get<DashboardStats>(`${this.api}/dashboard/stats`); }
+  getTechnicianLoad() { return this.http.get<TechnicianLoad[]>(`${this.api}/dashboard/technicians`); }
+  getNotifications() { return this.http.get<NotificationItem[]>(`${this.api}/notifications`); }
+  getUnreadCount() { return this.http.get<{ count: number }>(`${this.api}/notifications/unread-count`); }
+  markNotificationRead(id: number) { return this.http.put(`${this.api}/notifications/${id}/read`, {}); }
+  markAllRead() { return this.http.put(`${this.api}/notifications/read-all`, {}); }
 
-  markNotificationRead(id: number) {
-    return this.http.put<NotificationItem>(`${this.api}/notifications/${id}/read`, {});
-  }
-
-  getCategories() {
-    return this.http.get<Category[]>(`${this.api}/categories`);
-  }
-
-  getUsers() {
-    return this.http.get<User[]>(`${this.api}/users`);
-  }
-
-  getTeams() {
-    return this.http.get<Team[]>(`${this.api}/teams`);
-  }
+  // Référentiels
+  getCategories() { return this.http.get<Category[]>(`${this.api}/categories`); }
+  getMyAssets() { return this.http.get<Asset[]>(`${this.api}/assets/mine`); }
+  getUsers() { return this.http.get<User[]>(`${this.api}/users`); }
+  getTeams() { return this.http.get<Team[]>(`${this.api}/teams`); }
+  createUser(body: object) { return this.http.post<User>(`${this.api}/users`, body); }
+  toggleUser(id: number) { return this.http.patch<User>(`${this.api}/users/${id}/toggle`, {}); }
+  createTeam(body: { nom: string; description: string }) { return this.http.post<Team>(`${this.api}/teams`, body); }
+  createCategory(body: { nom: string; description: string }) { return this.http.post<Category>(`${this.api}/categories`, body); }
 }

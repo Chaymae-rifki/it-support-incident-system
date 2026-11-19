@@ -39,6 +39,6 @@ public class User {
     private LocalDateTime dateCreation = LocalDateTime.now();
 
     public enum Role {
-        EMPLOYE, TECHNICIEN, ADMIN
+        EMPLOYE, TECHNICIEN, IT_MANAGER, ADMIN
     }
 }

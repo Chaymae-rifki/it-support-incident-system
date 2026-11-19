@@ -2,6 +2,7 @@ package ma.ensaf.itsupport.service;
 
 import lombok.RequiredArgsConstructor;
 import ma.ensaf.itsupport.dto.DashboardStatsDto;
+import ma.ensaf.itsupport.dto.TechnicianLoadDto;
 import ma.ensaf.itsupport.entity.Ticket;
 import ma.ensaf.itsupport.entity.User;
 import ma.ensaf.itsupport.repository.CategoryRepository;
@@ -62,4 +63,39 @@ public class DashboardService {
                 parCategorie, parPriorite
         );
     }
+    public List<TechnicianLoadDto> getTechnicianLoad() {
+
+    List<User> technicians =
+            userRepository.findByRoleAndActifTrue(User.Role.TECHNICIEN);
+
+    return technicians.stream()
+            .map(technician -> {
+
+                List<Ticket> tickets =
+                        ticketRepository.findByTechnicienId(technician.getId());
+
+                long actifs = tickets.stream()
+                        .filter(ticket ->
+                                ticket.getStatut() == Ticket.TicketStatus.AFFECTE
+                                || ticket.getStatut() == Ticket.TicketStatus.EN_COURS
+                                || ticket.getStatut() == Ticket.TicketStatus.EN_ATTENTE
+                        )
+                        .count();
+
+                long resolus = tickets.stream()
+                        .filter(ticket ->
+                                ticket.getStatut() == Ticket.TicketStatus.RESOLU
+                                || ticket.getStatut() == Ticket.TicketStatus.CLOTURE
+                        )
+                        .count();
+
+                return new TechnicianLoadDto(
+                        technician.getId(),
+                        technician.getPrenom() + " " + technician.getNom(),
+                        actifs,
+                        resolus
+                );
+            })
+            .toList();
+}
 }

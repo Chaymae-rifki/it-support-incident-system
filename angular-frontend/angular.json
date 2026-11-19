@@ -24,10 +24,14 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "port": 4200
+            "port": 4200,
+            "buildTarget": "it-support-angular-frontend:build"
           }
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "7928a0f0-6209-49e5-affa-05c21af095e7"
   }
 }

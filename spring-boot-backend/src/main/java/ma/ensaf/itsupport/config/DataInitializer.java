@@ -34,6 +34,7 @@ public class DataInitializer implements CommandLineRunner {
         userRepository.save(User.builder().nom("Rifki").prenom("Chaymae").email("admin@deskflow.ma").motDePasse(pwd).role(User.Role.ADMIN).build());
         userRepository.save(User.builder().nom("Oubouni").prenom("Imane").email("imane.tech@deskflow.ma").motDePasse(pwd).role(User.Role.TECHNICIEN).team(appTeam).build());
         userRepository.save(User.builder().nom("Bennani").prenom("Youssef").email("youssef.tech@deskflow.ma").motDePasse(pwd).role(User.Role.TECHNICIEN).team(netTeam).build());
+        userRepository.save(User.builder().nom("Alaoui").prenom("Hamza").email("manager@deskflow.ma").motDePasse(pwd).role(User.Role.IT_MANAGER).build());
         userRepository.save(User.builder().nom("El Amrani").prenom("Karim").email("karim.tech@deskflow.ma").motDePasse(pwd).role(User.Role.TECHNICIEN).team(matTeam).build());
         userRepository.save(User.builder().nom("Tazi").prenom("Salma").email("salma.employe@deskflow.ma").motDePasse(pwd).role(User.Role.EMPLOYE).build());
     }
